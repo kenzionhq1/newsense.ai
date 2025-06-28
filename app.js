@@ -2,11 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('cookie-session');
+const cors = require('cors');
 require('dotenv').config();
 
 require('./passport'); // passport config file
 
-const cors = require('cors');
+
 
 app.use(cors({
   origin: ['http://localhost:3000', 'https://newsense-puce.vercel.app'], // ✅ allow dev + production
