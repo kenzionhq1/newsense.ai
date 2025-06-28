@@ -7,25 +7,27 @@ require('dotenv').config();
 
 require('./passport'); // passport config file
 
-
+const app = express(); // ✅ This was missing
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://newsense-puce.vercel.app'], // ✅ allow dev + production
+  origin: ['http://localhost:3000', 'https://newsense-puce.vercel.app'],
   credentials: true,
 }));
 
+app.use(express.json()); // ✅ You might also need this
 
 app.use(session({
   name: 'session',
   maxAge: 24 * 60 * 60 * 1000,
-  keys: [process.env.COOKIE_KEY]
+  keys: [process.env.COOKIE_KEY],
 }));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'));
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB error:', err));
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/user', require('./routes/user'));
