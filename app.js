@@ -6,12 +6,13 @@ require('dotenv').config();
 
 require('./passport'); // passport config file
 
-const app = express();
-app.use(express.json());
-app.use(require('cors')({
-  origin: 'http://localhost:3000', // or your frontend prod URL
-  credentials: true
+const cors = require('cors');
+
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://newsense-puce.vercel.app'], // ✅ allow dev + production
+  credentials: true,
 }));
+
 
 app.use(session({
   name: 'session',
