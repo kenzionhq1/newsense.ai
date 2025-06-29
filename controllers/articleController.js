@@ -1,11 +1,14 @@
+// controllers/articleController.js
+
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { OpenAI } = require('openai');
+const User = require('../models/User'); // ✅ Import user model here
 require('dotenv').config();
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const gemini = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-exports.generateArticle = async (req, res) => {
+const generateArticle = async (req, res) => {
   try {
     const { topic, tone } = req.body;
 
@@ -31,21 +34,26 @@ exports.generateArticle = async (req, res) => {
       article = response.choices[0].message.content;
     } else {
       console.log('➡️ Using Gemini (Free)');
-      const model = gemini.getGenerativeModel({ model: 'models/gemini-pro' }); // ✅ fixed model ID
+      const model = gemini.getGenerativeModel({ model: 'models/gemini-pro' });
       const result = await model.generateContent(prompt);
       const response = await result.response;
-      article = response.text(); // ✅ get text safely
+      article = response.text();
     }
 
-    res.json({ article });
+    // ✅ Update article count if user is authenticated
+    if (req.user && req.user._id) {
+      await User.findByIdAndUpdate(req.user._id, {
+        $inc: { articleCount: 1 },
+      });
+    }
+
+    return res.json({ article });
   } catch (err) {
     console.error('🔥 AI Generation Error:', err?.response?.data || err.message || err);
     res.status(500).json({ message: 'AI generation failed.' });
   }
 };
-if (req.user) {
-    await User.findByIdAndUpdate(req.user._id, {
-      $inc: { articleCount: 1 }
-    });
-  }
-  
+
+module.exports = {
+  generateArticle,
+};
