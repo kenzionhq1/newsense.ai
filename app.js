@@ -16,7 +16,7 @@ app.use(cors({
 
 app.use(express.json()); // ✅ You might also need this
 
-const session = require('express-session');
+
 
 app.use(session({
   secret: process.env.COOKIE_KEY,
