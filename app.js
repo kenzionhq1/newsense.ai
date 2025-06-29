@@ -1,28 +1,35 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
-const session = require('express-session'); // ✅ Correct package
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const cors = require('cors');
 require('dotenv').config();
 
-require('./passport'); // ✅ Must come after passport config
+require('./passport');
 
 const app = express();
+
+// ✅ Required for secure cookies on Render
+app.set('trust proxy', 1);
 
 app.use(cors({
   origin: ['http://localhost:3000', 'https://newsense-puce.vercel.app'],
   credentials: true,
 }));
 
-app.use(express.json()); // ✅ Required for parsing JSON
+app.use(express.json());
 
 app.use(session({
-  secret: process.env.COOKIE_KEY, // ✅ Example: 'my-secret-key'
+  secret: process.env.COOKIE_KEY,
   resave: false,
   saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // true only on HTTPS
-    maxAge: 24 * 60 * 60 * 1000, // 1 day
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    maxAge: 24 * 60 * 60 * 1000,
   },
 }));
 

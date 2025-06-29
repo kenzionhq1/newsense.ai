@@ -43,3 +43,9 @@ exports.generateArticle = async (req, res) => {
     res.status(500).json({ message: 'AI generation failed.' });
   }
 };
+if (req.user) {
+    await User.findByIdAndUpdate(req.user._id, {
+      $inc: { articleCount: 1 }
+    });
+  }
+  

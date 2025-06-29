@@ -1,13 +1,12 @@
-const router = require('express').Router();
+const mongoose = require('mongoose');
 
-router.get('/me', (req, res) => {
-  if (!req.user) return res.status(401).json({ message: 'Not logged in' });
-  res.json({
-    id: req.user._id,
-    name: req.user.name,
-    email: req.user.email,
-    tier: req.user.tier
-  });
+const userSchema = new mongoose.Schema({
+  googleId: { type: String, required: true, unique: true },
+  email: { type: String, required: true },
+  displayName: String,
+  tier: { type: String, enum: ['free', 'pro'], default: 'free' },
+  createdAt: { type: Date, default: Date.now },
+  articleCount: { type: Number, default: 0 },
 });
 
-module.exports = router;
+module.exports = mongoose.model('User', userSchema);

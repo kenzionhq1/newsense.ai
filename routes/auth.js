@@ -10,7 +10,8 @@ router.get('/google', passport.authenticate('google', {
 // 2. Google callback
 router.get('/google/callback',
   passport.authenticate('google', {
-    successRedirect: process.env.CLIENT_HOME_URL || 'http://localhost:3000',
+    successRedirect: 'https://newsense-puce.vercel.app/dashboard',
+
     failureRedirect: '/login/failed'
   })
 );
