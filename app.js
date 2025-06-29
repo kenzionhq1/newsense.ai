@@ -1,33 +1,30 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
-const session = require('cookie-session');
+const session = require('express-session'); // ✅ Correct package
 const cors = require('cors');
 require('dotenv').config();
 
-require('./passport'); // passport config file
+require('./passport'); // ✅ Must come after passport config
 
-const app = express(); // ✅ This was missing
+const app = express();
 
 app.use(cors({
   origin: ['http://localhost:3000', 'https://newsense-puce.vercel.app'],
   credentials: true,
 }));
 
-app.use(express.json()); // ✅ You might also need this
-
-
+app.use(express.json()); // ✅ Required for parsing JSON
 
 app.use(session({
-  secret: process.env.COOKIE_KEY,
+  secret: process.env.COOKIE_KEY, // ✅ Example: 'my-secret-key'
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // true on production (https)
+    secure: process.env.NODE_ENV === 'production', // true only on HTTPS
     maxAge: 24 * 60 * 60 * 1000, // 1 day
   },
 }));
-
 
 app.use(passport.initialize());
 app.use(passport.session());
