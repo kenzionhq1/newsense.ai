@@ -1,12 +1,9 @@
 const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
-  googleId: String,
-  name: String,
+const UserSchema = new mongoose.Schema({
+  displayName: String,
   email: String,
-  tier: { type: String, default: 'free' },
-  usageCount: { type: Number, default: 0 },
-  lastReset: { type: Date, default: Date.now }
+  tier: String,
 });
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.models.User || mongoose.model('User', UserSchema); // ✅ safe check
