@@ -17,8 +17,8 @@ exports.generateArticle = async (req, res) => {
 
     let article = '';
 
-    // Simulate access tier: force 'free' or 'pro' manually for now
-    const isPro = false; // set true if you want to test GPT-4 Turbo
+    // For now, set manually: false = Gemini, true = OpenAI
+    const isPro = false;
 
     if (isPro) {
       console.log('➡️ Using OpenAI (GPT-4 Turbo)');
@@ -31,9 +31,10 @@ exports.generateArticle = async (req, res) => {
       article = response.choices[0].message.content;
     } else {
       console.log('➡️ Using Gemini (Free)');
-      const model = gemini.getGenerativeModel({ model: 'gemini-pro' });
+      const model = gemini.getGenerativeModel({ model: 'models/gemini-pro' }); // ✅ fixed model ID
       const result = await model.generateContent(prompt);
-      article = result.response.text();
+      const response = await result.response;
+      article = response.text(); // ✅ get text safely
     }
 
     res.json({ article });
