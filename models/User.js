@@ -1,9 +1,13 @@
+// models/User.js
 const mongoose = require('mongoose');
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
+  googleId: { type: String, required: true, unique: true },
+  email: { type: String, required: true },
   displayName: String,
-  email: String,
-  tier: String,
+  tier: { type: String, enum: ['free', 'pro'], default: 'free' },
+  createdAt: { type: Date, default: Date.now },
+  articleCount: { type: Number, default: 0 },
 });
 
-module.exports = mongoose.models.User || mongoose.model('User', UserSchema); // ✅ safe check
+module.exports = mongoose.models.User || mongoose.model('User', userSchema);
