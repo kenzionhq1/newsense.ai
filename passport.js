@@ -6,14 +6,20 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: 'https://newsense-ai.onrender.com/api/auth/google/callback',
 }, (accessToken, refreshToken, profile, done) => {
-  const user = {
-    id: profile.id,
-    displayName: profile.displayName,
-    email: profile.emails[0].value,
-    tier: 'free',
-  };
-  return done(null, user);
+  try {
+    const user = {
+      id: profile.id,
+      displayName: profile.displayName,
+      email: profile.emails?.[0]?.value || null,
+      tier: 'free',
+    };
+    return done(null, user);
+  } catch (err) {
+    console.error('Google Strategy Error:', err);
+    return done(err, null);
+  }
 }));
+
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));

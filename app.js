@@ -16,11 +16,18 @@ app.use(cors({
 
 app.use(express.json()); // ✅ You might also need this
 
+const session = require('express-session');
+
 app.use(session({
-  name: 'session',
-  maxAge: 24 * 60 * 60 * 1000,
-  keys: [process.env.COOKIE_KEY],
+  secret: process.env.COOKIE_KEY,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // true on production (https)
+    maxAge: 24 * 60 * 60 * 1000, // 1 day
+  },
 }));
+
 
 app.use(passport.initialize());
 app.use(passport.session());
